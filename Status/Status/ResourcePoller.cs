@@ -12,34 +12,47 @@ namespace Status
     {
        public ResourcePoller(Resource res, int pollingIterval)
        {
-           this.PollingInterval = Math.Abs(pollingIterval);
-           this.Resource = res;
+            ResourceFactory resFactory = new ResourceFactory();
+            PollingInterval = Math.Abs(pollingIterval);
+            Resource = res;
 
        }
 
        public int PollingInterval { get; private set; }
        public Resource Resource { get; private set; }
-       public async Task<State> PollAsync()
+       public async Task<State> PollHttpAsync()
        {
            //should the poller poll more than on resource at a time?
-           
-           State state = new State();
-           //monitor for as long as we have an internet/intranet
-           //connection
-          // while (IsNetworkAvailable())
-           //{
-               //here we have to figure out how to batch up the notifications and the logging for every poll interval
-
-               await Task.Delay(this.PollingInterval);
-               HttpResponseMessage resMsg = await this.Resource.Poll();
+                State state = new State();
+               await Task.Delay(PollingInterval);
+               HttpResponseMessage resMsg = await Resource.Poll();
                state.Status = resMsg.StatusCode.ToString();
-               state.Url = this.Resource.GetAbsoluteUri();
-               
-               
-          // }
-
+               state.Url = Resource.GetAbsoluteUri();
+ 
            return state;
        }
+
+        public async Task<State> PollServerAsync()
+        {
+            State state = new State();
+            await Task.Delay(PollingInterval);
+            PingReply reply = await Resource.Poll();
+            state.Url = string.Concat(Resource.Name,"-",reply.Address.ToString());
+            state.Status = reply.Status.ToString();
+            
+            return state;
+        }
+
+        public async Task<State> PollWindowsServiceAsync()
+        {
+            State state = new State();
+            await Task.Delay(PollingInterval);
+            
+            bool isRunning = await Resource.Poll();
+            state.Url = Resource.Name;
+            state.Status = isRunning ? "Running " : "Stoped";
+            return state;
+        }
        
        /// <summary>
        /// Indicates whether any network connection is available

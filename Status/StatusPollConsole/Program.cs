@@ -5,36 +5,52 @@ This example polls to detect the end of the asynchronous operation.
 */
 
 using System;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using SignalRStatusNotification;
+using System.Linq;
+using System.Collections.Generic;
 
-namespace Status.AyncPoller
+namespace Status.AysncPoller
 {
     public class PollUntilOperationCompletes
     {
+        private static int _interval; 
+
         public static void Main(string[] args){
-        //string url = "http://127.0.0.1:8088/";
-            //var server = new Server(url);
-
-            // Map the default hub url (/signalr)
-           // server.MapHubs();
-
-            // Start the server
-           // server.Start();
-
-          //  Console.WriteLine("Server running on {0}", url);
-
-            // Keep going until somebody hits 'x'
-            while (true) {
-             StateMonitor sm = new StateMonitor(20000, new System.Collections.Generic.List<string> { "http://www.cpsc.gov", "http://www.saferproducts.gov" });
-             sm.Init();
-                ConsoleKeyInfo ki = Console.ReadKey(true);
-                if (ki.Key == ConsoleKey.X) {
-                    break;
-                }
-            }
+            _interval = int.Parse(System.Configuration.ConfigurationManager.AppSettings["PollingInterval"].ToString());
+            Task.WaitAll(Task.Run(async () => await BeginMonitoring(_interval)));
+          
         }
 
+        public static async Task BeginMonitoring(int interval)
+        {
+            List<Resource> resources = new List<Resource>();
+            var urls = System.Configuration.ConfigurationManager.AppSettings["resources"].Split(',').ToList();
+            
+
+            urls.ForEach(s => resources.Add(new ResourceFactory().GetResource(s)));
+
+           
+            try {
+                StateMonitor sm = new StateMonitor(_interval,resources);
+                await sm.Init();
+            }
+            catch(System.AggregateException ex)
+            {
+                Console.WriteLine("Program Crashed because of " + ex.Data);
+                IList<State> st = new List<State>();
+                st.Add(new State() { Status = ex.StackTrace });
+               // StateLogger.SendAlertNotification(st, "asalomon@cpsc.gov");
+            }
+            
+
+
+        }
+
+      
+
+
     }
+
+    
 }

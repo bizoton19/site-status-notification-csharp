@@ -9,13 +9,16 @@ namespace Status
    public  abstract class Resource : IPollable
     {
         
-        public string Status { get; private set; }
-        public string Name { get; private set; }
+        public string Status { get; protected set; }
+        public string Name { get; protected set; }
         internal string Url{ get; set; }
+
+
         public virtual Task<dynamic> Poll()
         {
-           throw new  NotImplementedException();
-        }
+
+          throw new NotImplementedException();
+         }
 
         public virtual  bool Exist()
         {
