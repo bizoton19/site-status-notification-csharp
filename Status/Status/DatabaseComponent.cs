@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace Status
 {
-   public interface IPollable
+    public class DatabaseComponent: Resource
     {
-       Task<State> Poll();
-       bool Exist();
-       string GetAbsoluteUri();
-       int GetErrorCount();
     }
 }

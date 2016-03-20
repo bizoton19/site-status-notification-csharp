@@ -10,31 +10,29 @@ namespace Status
 {
    public class HttpResource: Resource
     {
+        private State _state;
        public HttpResource (Uri url=null){
          this.Url=url.AbsoluteUri;
          
        }
        
        public int ErrorCount { get; set; }
-       public override async Task<dynamic> Poll()
+       public override async Task<State> Poll()
        {
-           
            HttpResponseMessage response;
             using (var handler = new HttpClientHandler { UseDefaultCredentials = true })
             using (var client = new HttpClient(handler)){
+
                client.DefaultRequestHeaders.Accept.Clear();
-              
-               response = await client.GetAsync(this.Url);
+               client.Timeout = TimeSpan.FromSeconds(100);
+               response = await client.GetAsync(this.Url,HttpCompletionOption.ResponseHeadersRead);
                if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                        
-                        response = await client.GetAsync(this.Url);
-
+                    response = await client.GetAsync(this.Url,HttpCompletionOption.ResponseHeadersRead);
                 }
-               
-           }
-
-           return response;
+                _state = new State() { Status = response.StatusCode.ToString(), Url = this.Url };
+            }
+           return _state;
        }
     }
 }

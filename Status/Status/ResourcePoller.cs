@@ -20,40 +20,16 @@ namespace Status
 
        public int PollingInterval { get; private set; }
        public Resource Resource { get; private set; }
-       public async Task<State> PollHttpAsync()
+       public async Task<State> PollAsync()
        {
-           //should the poller poll more than on resource at a time?
+          
                 State state = new State();
-               await Task.Delay(PollingInterval);
-               HttpResponseMessage resMsg = await Resource.Poll();
-               state.Status = resMsg.StatusCode.ToString();
-               state.Url = Resource.GetAbsoluteUri();
- 
+                state = await Resource.Poll();
+
            return state;
        }
 
-        public async Task<State> PollServerAsync()
-        {
-            State state = new State();
-            await Task.Delay(PollingInterval);
-            PingReply reply = await Resource.Poll();
-            state.Url = string.Concat(Resource.Name,"-",reply.Address.ToString());
-            state.Status = reply.Status.ToString();
-            
-            return state;
-        }
-
-        public async Task<State> PollWindowsServiceAsync()
-        {
-            State state = new State();
-            await Task.Delay(PollingInterval);
-            
-            bool isRunning = await Resource.Poll();
-            state.Url = Resource.Name;
-            state.Status = isRunning ? "Running " : "Stoped";
-            return state;
-        }
-       
+      
        /// <summary>
        /// Indicates whether any network connection is available
        /// Filter connections below a spcified speed, as well as virtual network cards.

@@ -14,11 +14,10 @@ namespace Status
         internal string Url{ get; set; }
 
 
-        public virtual Task<dynamic> Poll()
+        public virtual Task<State> Poll()
         {
-
           throw new NotImplementedException();
-         }
+        }
 
         public virtual  bool Exist()
         {

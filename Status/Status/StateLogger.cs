@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Bilomax.Generic.Infrastructure.Email;
 using Bilomax.Generic.Infrastructure.Logging;
+using System.Net.Mail;
 
 namespace Status
 {
@@ -14,16 +15,31 @@ namespace Status
            Console.WriteLine(state);
        }
 
-       public static async Task SendAlertNotification(List<State> stateBatch)
+       public static void SendAlertNotification(IEnumerable<State> stateBatch, string recipients)
        {
            StringBuilder b = new StringBuilder();
-           stateBatch.ForEach(
-               r=>b.Append(
-                   string.Concat(
-                   r.Url,r.Status)));
-           IEmailService service = EmailServiceFactory.GetEmailService();
-           service.SendMail("alexs@hdwih.com","bizoton19@gmail.com","site status alerts",b.ToString() ,"");
+            b.AppendLine("The following resources had or have a status change: ");
+            stateBatch.ToList().ForEach(
+                r => b.AppendLine(String.Format("{0}- Status Code: {1}", r.Url, r.Status)));
+
+            b.AppendLine(DateTime.UtcNow.ToLocalTime().ToString());
+
+           SendMail("", recipients,"Resource Status Alerts",b.ToString());
            
        }
+
+        public static void SendMail(string from, string to, string subject, string body)
+        {
+        
+            MailMessage message = new MailMessage();
+            message.Subject = subject;
+            message.Body = body;
+            message.To.Add(to);
+            
+            SmtpClient smtp = new SmtpClient();
+            smtp.SendMailAsync(message);
+        }
+    
+
     }
 }

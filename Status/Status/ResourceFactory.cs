@@ -37,34 +37,6 @@ namespace Status
             }
             return null;
         }
-        public Resource GetResource(Resource resource)
-        {
-
-            if (resource== null)
-            {
-                return null;
-            }
-            if (resource.GetType() == typeof(Server))
-            {
-                return new Server(resource.Name, resource.Url);
-
-            }
-            if (resource.GetType() == typeof(WindowsService))
-            {
-                return new WindowsService(resource.Name,resource);
-
-            }
-            if (resource.GetType() == typeof(HttpResource))
-            {
-                return new HttpResource(new Uri(resource.Url)) ;
-
-            }
-            
-          
-
-
-
-            return null;
-        }
+        
     }
 }
