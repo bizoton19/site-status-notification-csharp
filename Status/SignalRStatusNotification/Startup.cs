@@ -26,7 +26,13 @@ namespace SignalRStatusNotification
                 .AppSettings["resources"]
                 .Split(',')
                 .ToList()
-                .ForEach(s => resources.Add(new ResourceFactory().GetResource(s)));
+                .ForEach(s =>
+                {
+                    Resource r = new ResourceFactory().GetResource(s);
+                    if (r != null)
+                        resources.Add(new ResourceFactory().GetResource(s));
+                    
+                }); 
 
             StateMonitor monitor = new StateMonitor(20000, resources);
             Task.Factory.StartNew(async() => await monitor.Init());

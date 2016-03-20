@@ -19,6 +19,8 @@ namespace SignalRStatusNotification
         private int _interval;
         private List<Resource> urls;
         private HashSet<State> _states = new HashSet<State>();
+       
+        private IList<State> st = new List<State>();
         private string _notificationRecipients;
 
         public StateMonitor(int updateInterval, List<Resource> resourceUris)
@@ -32,104 +34,84 @@ namespace SignalRStatusNotification
             _notificationRecipients = System.Configuration.ConfigurationManager.AppSettings["To"].ToString();
             await Task.Run(new Action(BeginPolling));
         
-                if (_states.Any())
-                {
-                    StateLogger.SendAlertNotification(_states, _notificationRecipients);
-                }
+              
             
         }
 
-        private void BeginPolling()
+        private  void BeginPolling()
         {
-
 
             while (ResourcePoller.IsNetworkAvailable())
             {
+                System.Threading.Thread.Sleep(this._interval);
                 foreach (var resource in urls)
                 {
-                    try
+                       
+                    ResourcePoller poller = new ResourcePoller(resource, this._interval);
+                    Console.WriteLine("Currently Polling:{0}-{1} ", resource.Name, resource.GetAbsoluteUri());
+                    Task<State> pollingTask  = poller.PollAsync();
+
+                    pollingTask.ContinueWith(t =>
                     {
+                        StringBuilder errMsgs = new StringBuilder();
+                        Console.WriteLine("Currently Polling:{0}-{1} ", resource.Name, resource.GetAbsoluteUri());
+                        ProcessTask(t, resource, errMsgs);
 
-                        if (resource.GetType() == typeof(WindowsService))
-                            MonitorWindowsService(resource);
-                        if (resource.GetType() == typeof(Server))
-                            MonitorServer(resource);
-                        if (resource.GetType() == typeof(HttpResource))
-                            MonitorHttpResource(resource);
-                    }
-                    catch (Exception ex)
+                    });
+
+
+            }
+
+                if (_states.Any())
+                {
+                    StateLogger.SendAlertNotification(_states, _notificationRecipients);
+                    _states.Clear();
+                }
+                
+            }
+        }
+
+        private void ProcessTask(Task<State> t, Resource resource, StringBuilder errMsgs)
+        {
+            switch (t.Status)
+            {
+
+                case TaskStatus.RanToCompletion:
+                    State state = t.Result;
+                    PrintStatus(t, TaskStatus.RanToCompletion.ToString());
+                    if (t.Result.Status != HttpStatusCode.OK.ToString() && !_states.Contains(t.Result))
+                        _states.Add(t.Result);
+                    else
+                        RemoveStateFromNotificationList(t);
+                    break;
+                case TaskStatus.Canceled:
+                    PrintStatus(resource, TaskStatus.Canceled.ToString().ToUpper());
+                    break;
+                case TaskStatus.Faulted:
+                    PrintStatus(resource, TaskStatus.Faulted.ToString().ToUpper());
+                    t.Exception.Flatten().InnerExceptions.ToList().ForEach(exception =>
                     {
-                        IList<State> st = new List<State>();
-                        st.Add(new State() { Status = ex.Message + "-" + ex.StackTrace });
-                        StateLogger.SendAlertNotification(st, _notificationRecipients);
-                    }
+                        
+                        errMsgs.AppendLine(exception.Message + " - " + exception.InnerException);
+                        st.Add(new State() { Url = resource.Name, Status = errMsgs.ToString() });
+                    });
 
-                }
-                if (_states.Any()) { 
-                StateLogger.SendAlertNotification(_states, _notificationRecipients);
-                }
-
-
+                    break;
+                default:
+                    break;
             }
         }
 
-        private void MonitorWindowsService(Resource resource)
+        private static void PrintStatus(Resource resource, string taskStatus)
+        { 
+
+            Console.Write("****\n{0} Polling:{1}-{2} ", taskStatus,resource.Name, resource.GetAbsoluteUri());
+        }
+        private static void PrintStatus(Task<State> t, string taskStatus)
         {
-            ResourcePoller poller = new ResourcePoller(resource, this._interval);
-            Task<State> pollresult = poller.PollWindowsServiceAsync();
-
-            State state = pollresult.Result;
-            Console.WriteLine("Result: " + pollresult.Result.Url + " " + pollresult.Result.Status);
-            if (pollresult.Result.Status != "Running" && !_states.Contains(pollresult.Result))
-            {
-                _states.Add(pollresult.Result);
-            }
-            else
-            {
-                RemoveStateFromNotificationList(pollresult);
-            }
-            
+            Console.WriteLine("|");
+            Console.WriteLine("--{0} : {1} - {2}", taskStatus, t.Result.Url, t.Result.Status);
         }
-        private void MonitorServer(Resource resource)
-        {
-            ResourcePoller poller = new ResourcePoller(resource, this._interval);
-            Task<State> pollresult = poller.PollServerAsync();
-
-            State state = pollresult.Result;
-            Console.WriteLine("Result: " + pollresult.Result.Url + " " + pollresult.Result.Status);
-
-            if (pollresult.Result.Status != "Success" && !_states.Contains(pollresult.Result))
-            {
-                _states.Add(pollresult.Result);
-            }
-            else
-            {
-                RemoveStateFromNotificationList(pollresult);
-            }
-
-
-        }
-        private void MonitorHttpResource(Resource resource)
-        {
-            ResourcePoller poller = new ResourcePoller(resource, this._interval);
-            Task<State> pollresult = poller.PollHttpAsync();
-
-
-            State state = pollresult.Result;
-            Console.WriteLine("Result: " + pollresult.Result.Url + " " + pollresult.Result.Status);
-
-            if (pollresult.Result.Status != HttpStatusCode.OK.ToString() && !_states.Contains(pollresult.Result))
-            {
-
-                _states.Add(pollresult.Result);
-
-            }
-            else
-            {
-                RemoveStateFromNotificationList(pollresult);
-            }
-        }
-
         private void RemoveStateFromNotificationList(Task<State> pollresult)
         {
             if (_states.Contains(pollresult.Result))
