@@ -11,11 +11,19 @@ namespace Status
 {
    public static class StateLogger
     {
-       public static void Print(string state){
-           Console.WriteLine(state);
-       }
+        private static string _notificationRecipients;
+        public static void Print(Resource resource, string taskStatus)
+        {
 
-       public static void SendAlertNotification(IEnumerable<State> stateBatch, string recipients)
+            Console.Write("****\n{0} Polling:{1}-{2} ", taskStatus, resource.Name, resource.GetAbsoluteUri());
+        }
+        public static void Print(State t, string taskStatus)
+        {
+            Console.WriteLine("|");
+            Console.WriteLine("--{0} : {1} - {2} \n{3}", taskStatus, t.Url, t.Status, t.Type);
+        }
+
+        public static void SendAlertNotification(IEnumerable<State> stateBatch, string recipients)
        {
            StringBuilder b = new StringBuilder();
             b.AppendLine("The following resources had or have a status change: ");
