@@ -26,9 +26,11 @@ namespace Status
                client.DefaultRequestHeaders.Accept.Clear();
                client.Timeout = TimeSpan.FromSeconds(100);
                response = await client.GetAsync(this.Url,HttpCompletionOption.ResponseHeadersRead);
+                
                if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
                     response = await client.GetAsync(this.Url,HttpCompletionOption.ResponseHeadersRead);
+                    
                 }
                 _state = new State() { Status = response.StatusCode.ToString(), Url = this.Url };
             }
