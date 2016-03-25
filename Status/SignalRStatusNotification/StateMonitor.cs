@@ -33,8 +33,7 @@ namespace SignalRStatusNotification
         {
             _notificationRecipients = System.Configuration.ConfigurationManager.AppSettings["To"].ToString();
             await Task.Run(new Action(BeginPolling));
-        
-              
+
             
         }
 
@@ -48,13 +47,13 @@ namespace SignalRStatusNotification
                 {
                        
                     ResourcePoller poller = new ResourcePoller(resource, this._interval);
-                    Console.WriteLine("Currently Polling:{0}-{1} ", resource.Name, resource.GetAbsoluteUri());
+                    Console.WriteLine("Currently Polling:{0}---{1} ", resource.Name, resource.GetAbsoluteUri());
                     Task<State> pollingTask  = poller.PollAsync();
 
                     pollingTask.ContinueWith(t =>
                     {
                         StringBuilder errMsgs = new StringBuilder();
-                        Console.WriteLine("Currently Polling:{0}-{1} ", resource.Name, resource.GetAbsoluteUri());
+                        Console.WriteLine("Currently Polling:{0}---{1} ", resource.Name, resource.GetAbsoluteUri());
                         ProcessTask(t, resource, errMsgs);
 
                     });
