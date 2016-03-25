@@ -78,20 +78,19 @@ namespace SignalRStatusNotification
 
                 case TaskStatus.RanToCompletion:
                     State state = t.Result;
-                    PrintStatus(t, TaskStatus.RanToCompletion.ToString());
+                    Print(t.Result, TaskStatus.RanToCompletion.ToString());
                     if (t.Result.Status != HttpStatusCode.OK.ToString() && !_states.Contains(t.Result))
                         _states.Add(t.Result);
                     else
-                        RemoveStateFromNotificationList(t);
+                        RemoveStateFromCollection(t);
                     break;
                 case TaskStatus.Canceled:
-                    PrintStatus(resource, TaskStatus.Canceled.ToString().ToUpper());
+                    Print(resource, TaskStatus.Canceled.ToString().ToUpper());
                     break;
                 case TaskStatus.Faulted:
-                    PrintStatus(resource, TaskStatus.Faulted.ToString().ToUpper());
+                    Print(resource);
                     t.Exception.Flatten().InnerExceptions.ToList().ForEach(exception =>
                     {
-                        
                         errMsgs.AppendLine(exception.Message + " - " + exception.InnerException);
                         st.Add(new State() { Url = resource.Name, Status = errMsgs.ToString() });
                     });
@@ -102,17 +101,20 @@ namespace SignalRStatusNotification
             }
         }
 
-        private static void PrintStatus(Resource resource, string taskStatus)
-        { 
-
-            Console.Write("****\n{0} Polling:{1}-{2} ", taskStatus,resource.Name, resource.GetAbsoluteUri());
-        }
-        private static void PrintStatus(Task<State> t, string taskStatus)
+        private static void Print(Resource resource, string taskStatus=null)
         {
-            Console.WriteLine("|");
-            Console.WriteLine("--{0} : {1} - {2}", taskStatus, t.Result.Url, t.Result.Status);
+            if (taskStatus == null)
+                StateLogger.Print(resource, TaskStatus.Faulted.ToString().ToUpper());
+            else
+                StateLogger.Print(resource, taskStatus);
         }
-        private void RemoveStateFromNotificationList(Task<State> pollresult)
+
+        private static void Print(State state , string taskStatus)
+        {
+            StateLogger.Print(state, TaskStatus.Faulted.ToString().ToUpper());
+        }
+
+        private void RemoveStateFromCollection(Task<State> pollresult)
         {
             if (_states.Contains(pollresult.Result))
             {
