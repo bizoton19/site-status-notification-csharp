@@ -50,7 +50,9 @@ namespace Status
         public override async Task<State> Poll()
         {
             var ping = new Ping();
-            PingReply reply =   await ping.SendPingAsync(ServerName,10); // 1 minute time out (in ms)     
+            var buffer = new byte[32];
+            PingReply reply = await ping.SendPingAsync(ServerName, 4000, buffer, new PingOptions(600,true));
+            var error = reply.Status != IPStatus.Success || reply.RoundtripTime > 3000;
             _state = new State();
             _state.Url = string.Concat(this.Name, "-", reply.Address.ToString());
             _state.Status = reply.Status == IPStatus.Success? "OK": reply.Status.ToString();
