@@ -21,7 +21,7 @@ namespace Status
 
         public virtual  bool Exist()
         {
-            throw new NotImplementedException();
+             return true;
         }
 
         public virtual int GetErrorCount()
