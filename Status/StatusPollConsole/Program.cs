@@ -32,7 +32,7 @@ namespace Status.AysncPoller
             {
                 Resource r = new ResourceFactory().GetResource(s);
                 if (r != null)
-                    resources.Add(new ResourceFactory().GetResource(s));
+                    resources.Add(r);
                 else
                     Console.WriteLine("Unrecognizable resource: {0} . Please verify config file", r.Name);
             });
