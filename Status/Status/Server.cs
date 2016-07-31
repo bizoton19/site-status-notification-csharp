@@ -13,6 +13,8 @@ namespace Status
         private State _state;
         private string _serverName;
         private string _ipAddress;
+        private const int pingTimeout = 10000;
+        private const int roundTripTime = 3000;
 
         public string ServerName
         {
@@ -50,13 +52,33 @@ namespace Status
         public override async Task<State> Poll()
         {
             var ping = new Ping();
-            var buffer = new byte[32];
-            PingReply reply = await ping.SendPingAsync(ServerName, 4000, buffer, new PingOptions(600,true));
-            var error = reply.Status != IPStatus.Success || reply.RoundtripTime > 3000;
+            var data = "B".PadRight(32, 'B');
+            var buffer = Encoding.ASCII.GetBytes(data);
+            PingReply reply = await ping.SendPingAsync(ServerName, pingTimeout , buffer, new PingOptions(128,true));
+            
             _state = new State();
             _state.Url = string.Concat(this.Name, "-", reply.Address.ToString());
-            _state.Status = reply.Status == IPStatus.Success? "OK": reply.Status.ToString();
+            _state.Status = reply.Status == IPStatus.Success ? "OK" : GetPingMessage(reply);
             return _state;
+        }
+
+        private string GetPingMessage(PingReply reply)
+        {
+           string error = "";
+           string timoutError = reply.Status != IPStatus.Success ? 
+                string.Format("The timout Time period of {0} has been exceeded", pingTimeout) 
+                : string.Format("Roundtrip time {0} ", reply.RoundtripTime.ToString());
+
+            string roundTripError = reply.RoundtripTime > 3000 ?
+                string.Format("The roundtrip time period of {0} has been exceeded", roundTripTime * 60)
+                : string.Format("Roundtrip time{0} ", reply.RoundtripTime.ToString());
+
+            if (reply.Status != IPStatus.Success )
+                error = timoutError;
+            if (reply.RoundtripTime > roundTripTime)
+                error = roundTripError;
+
+                return error;
         }
      
     }
