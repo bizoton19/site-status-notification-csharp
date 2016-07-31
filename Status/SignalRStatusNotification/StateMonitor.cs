@@ -110,7 +110,7 @@ namespace SignalRStatusNotification
 
         private static void Print(State state , string taskStatus)
         {
-            StateLogger.Print(state, TaskStatus.Faulted.ToString().ToUpper());
+            StateLogger.Print(state, taskStatus);
         }
 
         private void RemoveStateFromCollection(Task<State> pollresult)
