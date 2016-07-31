@@ -11,7 +11,7 @@ namespace Status
 {
    public static class StateLogger
     {
-        private static string _notificationRecipients;
+        
         public static void Print(Resource resource, string taskStatus)
         {
 
@@ -20,7 +20,7 @@ namespace Status
         public static void Print(State t, string taskStatus)
         {
             Console.WriteLine("|");
-            Console.WriteLine("--{0} : {1} - {2} \n{3}", taskStatus, t.Url, t.Status, t.Type);
+            Console.WriteLine("--{0} : {1} - {2} \n{3}", taskStatus, t.Url, t.Status, t.Description);
         }
 
         public static void SendAlertNotification(IEnumerable<State> stateBatch, string recipients)
@@ -28,7 +28,7 @@ namespace Status
            StringBuilder b = new StringBuilder();
             b.AppendLine("The following resources had or have a status change: ");
             stateBatch.ToList().ForEach(
-                r => b.AppendLine(String.Format("{0}- Status Code: {1}", r.Url, r.Status)));
+                r => b.AppendLine(String.Format("{0}\rStatus Code: {1}\rErrorDescription: {2}", r.Url, r.Status,r.Description)));
 
             b.AppendLine(DateTime.UtcNow.ToLocalTime().ToString());
 
