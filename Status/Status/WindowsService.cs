@@ -34,13 +34,14 @@ namespace Status
         }
         public override async Task<State> Poll()
         {
-            bool running = await Task.Run(async () => {
+            bool running = await Task.Run(async () => {    
+
                 await Task.Delay(0);
                 return IsRunning();
             });
 
             _state = new State() { Url = string.Concat(this.ServiceName, "@", this.Server.Name) };
-            if (!running)
+            if (!running)//need to move this code out of here
             {
                 this.Restart();
                 if (!IsRunning())
