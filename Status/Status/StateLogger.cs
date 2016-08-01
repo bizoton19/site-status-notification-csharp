@@ -28,7 +28,7 @@ namespace Status
            StringBuilder b = new StringBuilder();
             b.AppendLine("The following resources had or have a status change: ");
             stateBatch.ToList().ForEach(
-                r => b.AppendLine(String.Format("{0}\rStatus Code: {1}\rErrorDescription: {2}", r.Url, r.Status,r.Description)));
+                r => b.AppendLine(String.Format("{0}\rStatus Code: {1}\rDescription: {2}\r", r.Url, r.Status,r.Description)));
 
             b.AppendLine(DateTime.UtcNow.ToLocalTime().ToString());
 
