@@ -18,6 +18,7 @@ namespace Status
         private Server serverInstance;
         private float cpuPercent;
         private int _cpuAlertTreshold;
+        private const string _positiveStatusCode = "OK";
         public IisAppPool(string Name, Server server, int cpuAlertTreshold=90)
         {
             this.Name = Name;
@@ -99,12 +100,13 @@ namespace Status
 
                             if (cpuPercent >= _cpuAlertTreshold && cpuPercentAfterThirthySeconds >= _cpuAlertTreshold)
                             {
-                                state.Status = string.Format("The CPU for app pool {0} on {1} has reach {2}% and may cause HTTP 503 errors", Name, serverInstance.Name, cpuPercent);
+                                state.Status = "High CPU Load";
+                                state.Description =string.Format("The CPU for app pool {0} on {1} has reach {2}% and may cause HTTP 503 errors", Name, serverInstance.Name, cpuPercent);
                                 state = GetCommonState(server, state, numOfRequests);
                             }
                             else
                             {
-                                state.Status = "OK";
+                                state.Status = _positiveStatusCode;
 
                             }
 
@@ -117,7 +119,7 @@ namespace Status
                         }
                         else
                         {
-                            state.Status = "OK";
+                            state.Status = _positiveStatusCode;
 
                         }
 
@@ -130,7 +132,8 @@ namespace Status
                     else
                     {
                         state.Description = stateResult == ObjectState.Started ? string.Format("The app pool on server {0} is in the following in {1} state, the number of worker processes is {2}", serverInstance.Name, stateResult.ToString(), server.ApplicationPools[Name].WorkerProcesses.Count) : "Unavailable";
-                        state.Status = stateResult == ObjectState.Started ? "OK" : stateResult.ToString();
+                        state.Status = stateResult == ObjectState.Started ? _positiveStatusCode: "App Pool Not Started";
+
                         state = GetCommonState(server, state, 0);
                         if (stateResult == ObjectState.Stopped)
                         {
@@ -148,7 +151,8 @@ namespace Status
             }
             catch(Exception ex)
             {
-                state.Status = "failed with " + ex.Message;
+                state.Status = ex.GetType().Name;
+                state.Description = "'polling failed with" + ex.Message;
                 state.Url = string.Concat(this.Name, "@", serverInstance.Name);
                 return state;
             }
