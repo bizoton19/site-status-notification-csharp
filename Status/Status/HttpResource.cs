@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,8 +11,8 @@ namespace Status
    public class HttpResource: Resource
     {
         private State _state;
-       public HttpResource (Uri url=null){
-         this.Url=url.AbsoluteUri;
+        public HttpResource (Uri url=null){
+         Url=url.AbsoluteUri;
          
        }
        
