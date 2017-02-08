@@ -1,0 +1,50 @@
+﻿
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AngularJS - SignalR - ServiceDashboard</title>
+
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="bower_components/epoch/epoch.min.css" rel="stylesheet" />
+
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+
+    <script src="bower_components/signalr/jquery.signalR.min.js"></script>
+    <script src="bower_components/epoch/epoch.min.js"></script>
+
+    <script src="bower_components/d3/d3.min.js"></script>
+    <script src="bower_components/ng-epoch/ng-epoch.js"></script>
+    <script src="bower_components/pie-chart/dist/pie-chart.min.js"></script>
+
+
+    <script src="app/app.js"></script>
+    <script src="app/services.js"></script>
+    <script src="app/directives.js"></script>
+    <script src="app/controllers.js"></script>
+    <script>
+        $(function ()
+        {
+        var con = $.hubConnection();
+            var hub = con.createHubProxy('StatusNotificationHub');
+            hub.on('broadcastStatus', function (url, status, datetime){
+                $('#stateUrl').text(url);
+                $('#statusCode').text(status);
+                $('#statusChangeTime').text(datetime);
+            });
+        
+        });
+    </script>
+</head>
+<h1>Augular DashBoard Test</h1>
+<body ng-app="angularServiceDashboard">
+    <p id="stateUrl"></p>
+    <p id="statusCode"></p>
+    <p id="statusChangeTime"></p>
+    
+</body>
+
+</html>
