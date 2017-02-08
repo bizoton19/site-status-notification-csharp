@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bilomax.Generic.Infrastructure.Email;
-using Bilomax.Generic.Infrastructure.Logging;
 using System.Net.Mail;
 
 namespace Status
@@ -28,10 +26,11 @@ namespace Status
            StringBuilder b = new StringBuilder();
             b.AppendLine("The following resources had or have a status change: ");
             stateBatch.ToList().ForEach(
-                r => b.AppendLine(String.Format("{0}\rStatus Code: {1}\rDescription: {2}\r", r.Url, r.Status,r.Description)));
-
-            b.AppendLine(DateTime.UtcNow.ToLocalTime().ToString());
-
+                r => b.AppendLine(String.Format("\r--\rResource URI: {0}\rStatus Code: {1}\rDescription: {2}\rTime: {3}\r--\r",
+                r.Url,
+                r.Status,
+                r.Description,
+                DateTime.UtcNow.ToLocalTime().ToString())));
            SendMail("", recipients,"Resource Status Alerts",b.ToString());
            
        }

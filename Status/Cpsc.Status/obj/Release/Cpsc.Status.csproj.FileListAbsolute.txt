@@ -1,0 +1,8 @@
+C:\ExitTools\github\site-status-notification-csharp\Status\Cpsc.Status\bin\Release\Cpsc.Status.dll
+C:\ExitTools\github\site-status-notification-csharp\Status\Cpsc.Status\bin\Release\Cpsc.Status.pdb
+C:\ExitTools\github\site-status-notification-csharp\Status\Cpsc.Status\bin\Release\Status.dll
+C:\ExitTools\github\site-status-notification-csharp\Status\Cpsc.Status\bin\Release\Microsoft.Web.Administration.dll
+C:\ExitTools\github\site-status-notification-csharp\Status\Cpsc.Status\bin\Release\Status.pdb
+C:\ExitTools\github\site-status-notification-csharp\Status\Cpsc.Status\obj\Release\Cpsc.Status.csprojResolveAssemblyReference.cache
+C:\ExitTools\github\site-status-notification-csharp\Status\Cpsc.Status\obj\Release\Cpsc.Status.dll
+C:\ExitTools\github\site-status-notification-csharp\Status\Cpsc.Status\obj\Release\Cpsc.Status.pdb

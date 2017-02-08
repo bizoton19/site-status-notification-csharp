@@ -101,7 +101,7 @@ namespace Status
                             if (cpuPercent >= _cpuAlertTreshold && cpuPercentAfterThirthySeconds >= _cpuAlertTreshold)
                             {
                                 state.Status = "High CPU Load";
-                                state.Description =string.Format("The CPU for app pool {0} on {1} has reach {2}% and may cause HTTP 503 errors", Name, serverInstance.Name, cpuPercent);
+                                state.Description =string.Format("The CPU for app pool {0} on {1} has reach {2}% and may cause HTTP 503 errors.\r Current Number of Requests: {3}", Name, serverInstance.Name, cpuPercent, numOfRequests);
                                 state = GetCommonState(server, state, numOfRequests);
                             }
                             else
@@ -138,7 +138,7 @@ namespace Status
                         if (stateResult == ObjectState.Stopped)
                         {
                             server.ApplicationPools[Name].Start();
-                            state.Description += server.ApplicationPools[Name].State == ObjectState.Started ? "\rResolution: The appPool was started" : state.Description;
+                            state.Description += server.ApplicationPools[Name].State == ObjectState.Started ? "\rResolution: The appPool was started\r" : state.Description;
                         }
 
 

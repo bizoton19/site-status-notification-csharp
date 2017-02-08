@@ -8,6 +8,8 @@ namespace Status
 {
    public class ResourceFactory
     {
+        private const string _resLocationIndicator = "@";
+        private const string _resTypeIncidcator = ":";
         public Resource GetResource(string resource)
         {
             if (resource == null)
@@ -22,11 +24,7 @@ namespace Status
 
                 return new HttpResource(new Uri(resource.Trim()));
             }
-            //if (resource.ToLowerInvariant().Contains("http") && resource.ToLowerInvariant().Contains("API_KEY"))
-            //{
-
-            //    return new HttpResource(new Uri(resource.Trim()));
-            //}
+           
 
             if (resource.ToLowerInvariant().Contains("server"))
             {
@@ -49,6 +47,7 @@ namespace Status
                 return new IisAppPool(appPoolName, new Server(server),90);//need to put cpu treshold in config file?
                
             }
+            
             return new NullResource();
         }
         

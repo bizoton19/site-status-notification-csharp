@@ -1,4 +1,7 @@
-﻿using System;
+﻿   
+
+
+  using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -66,12 +69,12 @@ namespace Status
         {
            string error = "";
            string timoutError = reply.Status != IPStatus.Success ? 
-                string.Format("The timout Time period of {0} has been exceeded", pingTimeout) 
-                : string.Format("Roundtrip time {0} ", reply.RoundtripTime.ToString());
+                $"The timout Time period of {pingTimeout} has been exceeded"
+                : $"Roundtrip time { reply.RoundtripTime.ToString()}";
 
             string roundTripError = reply.RoundtripTime > 3000 ?
-                string.Format("The roundtrip time period of {0} has been exceeded", roundTripTime * 60)
-                : string.Format("Roundtrip time{0} ", reply.RoundtripTime.ToString());
+                $"The roundtrip time period of {roundTripTime * 60} has been exceeded"
+                : $"Roundtrip time{reply.RoundtripTime.ToString()} " ;
 
             if (reply.Status != IPStatus.Success )
                 error = timoutError;

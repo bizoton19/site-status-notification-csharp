@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace Status
 {
-   public class Database: Resource
+    public class NullResource: Resource
     {
-        private List<DatabaseComponent> _dbComponents;
-        
+        public override bool Exist()
+        {
+            return false;
+        }
+
+       
     }
 }

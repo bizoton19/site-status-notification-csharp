@@ -77,21 +77,25 @@ namespace SignalRStatusNotification
 
                 case TaskStatus.RanToCompletion:
                     State state = t.Result;
-                    Print(t.Result, TaskStatus.RanToCompletion.ToString());
-                    if (t.Result.Status != HttpStatusCode.OK.ToString() && !_states.Contains(t.Result))
-                        _states.Add(t.Result);
-                    else
-                        RemoveStateFromCollection(t);
+                    Print(state, TaskStatus.RanToCompletion.ToString());
+                    if (state.Status != HttpStatusCode.OK.ToString())
+                        _states.Add(state);
+                    
                     break;
                 case TaskStatus.Canceled:
-                    Print(resource, TaskStatus.Canceled.ToString().ToUpper());
+                    t.Exception.Flatten().InnerExceptions.ToList().ForEach(exception =>
+                    {
+                        errMsgs.AppendLine(exception.Message + " - " + exception.InnerException);
+                        _states.Add(new State() { Url = resource.GetAbsoluteUri(), Status = errMsgs.ToString() });
+                    });
+                    //Print(resource, TaskStatus.Canceled.ToString().ToUpper());
                     break;
                 case TaskStatus.Faulted:
                     Print(resource);
                     t.Exception.Flatten().InnerExceptions.ToList().ForEach(exception =>
                     {
                         errMsgs.AppendLine(exception.Message + " - " + exception.InnerException);
-                        st.Add(new State() { Url = resource.Name, Status = errMsgs.ToString() });
+                        _states.Add(new State() { Url = resource.GetAbsoluteUri(), Status = errMsgs.ToString() });
                     });
 
                     break;
