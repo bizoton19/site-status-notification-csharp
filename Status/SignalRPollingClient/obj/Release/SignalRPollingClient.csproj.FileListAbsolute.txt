@@ -1,6 +1,0 @@
-C:\ExitTools\github\site-status-notification-csharp\Status\SignalRPollingClient\bin\SignalRPollingClient.dll.config
-C:\ExitTools\github\site-status-notification-csharp\Status\SignalRPollingClient\bin\SignalRPollingClient.dll
-C:\ExitTools\github\site-status-notification-csharp\Status\SignalRPollingClient\bin\SignalRPollingClient.pdb
-C:\ExitTools\github\site-status-notification-csharp\Status\SignalRPollingClient\obj\Release\SignalRPollingClient.csprojResolveAssemblyReference.cache
-C:\ExitTools\github\site-status-notification-csharp\Status\SignalRPollingClient\obj\Release\SignalRPollingClient.dll
-C:\ExitTools\github\site-status-notification-csharp\Status\SignalRPollingClient\obj\Release\SignalRPollingClient.pdb
