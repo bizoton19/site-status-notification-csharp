@@ -1,17 +1,18 @@
-///////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 ///////////////////////////////////////////////////////////////////////////////
 
 var target = Argument<string>("target", "Default");
 var configuration = Argument<string>("configuration", "Release");
-
+var deployDir = Argument<string>("deployDir","");
 ///////////////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
 ///////////////////////////////////////////////////////////////////////////////
 
 var solutions = GetFiles("./**/*.sln");
 var solutionPaths = solutions.Select(solution => solution.GetDirectory());
-
+var destDirectory = String.IsNullOrEmpty(deployDir)?"C:\\Poller":deployDir;
+var statusPollConsoleDir = "./StatusPollConsole/bin/Release";
 ///////////////////////////////////////////////////////////////////////////////
 // SETUP / TEARDOWN
 ///////////////////////////////////////////////////////////////////////////////
@@ -77,14 +78,32 @@ Task("Build")
 });
 
 
-
+Task("Deploy")
+	.Description("Copies the files in the bin output directory to deployment location, if the dest direct doesn't exist, it will create it")
+	.IsDependentOn("Build")
+	.Does(()=>
+	{
+	//copy all fiels in release directory to dest directory
+	var dir = new DirectoryInfo(destDirectory);
+    if (dir.Exists) {
+	 foreach(var f in System.IO.Directory.GetFiles(statusPollConsoleDir,"*")) {
+	  System.IO.File.Copy(f,String.Concat(destDirectory,"\\", new System.IO.FileInfo(f).Name)) ;
+	 }
+    }else {
+		 System.IO.Directory.CreateDirectory(dir.FullName); 
+		 foreach(var f in System.IO.Directory.GetFiles(statusPollConsoleDir,"*")) {
+			Console.WriteLine(f); 
+			System.IO.File.Copy(f,String.Concat(destDirectory,"\\", new System.IO.FileInfo(f).Name)) ;
+	     }
+    }
+ });
 ///////////////////////////////////////////////////////////////////////////////
 // TARGETS
 ///////////////////////////////////////////////////////////////////////////////
 
 Task("Default")
     .Description("This is the default task which will be ran if no specific target is passed in.")
-    .IsDependentOn("Build");
+    .IsDependentOn("Deploy");
 
 ///////////////////////////////////////////////////////////////////////////////
 // EXECUTION
