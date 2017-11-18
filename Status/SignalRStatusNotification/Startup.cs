@@ -34,7 +34,7 @@ namespace SignalRStatusNotification
                     
                 }); 
 
-            StateMonitor monitor = new StateMonitor(20000, resources);
+            StateMonitor monitor = new StateMonitor(20000, resources,MODE.Background);
             Task.Factory.StartNew(async() => await monitor.Init());
 
             

@@ -3,51 +3,90 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bilomax.Generic.Infrastructure.Email;
-using Bilomax.Generic.Infrastructure.Logging;
 using System.Net.Mail;
 
 namespace Status
 {
-   public static class StateLogger
-    {
-        private static string _notificationRecipients;
-        public static void Print(Resource resource, string taskStatus)
-        {
+   
 
-            Console.Write("****\n{0} Polling:{1}-{2} ", taskStatus, resource.Name, resource.GetAbsoluteUri());
+    public abstract class StateLogger
+    {
+        private MODE _mode;
+        public StateLogger(MODE mode)
+        {
+            _mode = mode;
         }
-        public static void Print(State t, string taskStatus)
+        public abstract StateLogger Save(Resource resource, string taskStatus);
+        
+        public virtual StateLogger Log (Resource resource, string taskStatus )
+        {
+            Console.Write("****\n{0} Polling:{1}-{2} ", taskStatus, resource.Name, resource.GetAbsoluteUri());
+            return this;
+        }
+        public virtual StateLogger Log(State t, string taskStatus)
+        {
+          
+                Console.WriteLine("|");
+                Console.WriteLine("--{0} : {1} - {2} \n{3}", taskStatus, t.Url, t.Status, t.Description);
+            
+            return this;
+        }
+        public virtual StateLogger Log(IEnumerable<State> stateBatch, string recipients)
+        {
+            if (_mode == MODE.Background)
+            {
+                SendAlertNotification(stateBatch, recipients);
+            }
+            else
+            {
+                stateBatch.ToList().ForEach(x =>
+                {
+                    Print(x, x.Status);
+                });
+            }
+            return this;
+        }
+
+       
+        private  void Print(State t, string taskStatus)
         {
             Console.WriteLine("|");
-            Console.WriteLine("--{0} : {1} - {2} \n{3}", taskStatus, t.Url, t.Status, t.Type);
+            Console.WriteLine("--{0} : {1} - {2} \n{3}", taskStatus, t.Url, t.Status, t.Description);
         }
 
-        public static void SendAlertNotification(IEnumerable<State> stateBatch, string recipients)
-       {
-           StringBuilder b = new StringBuilder();
-            b.AppendLine("The following resources had or have a status change: ");
-            stateBatch.ToList().ForEach(
-                r => b.AppendLine(String.Format("{0}- Status Code: {1}", r.Url, r.Status)));
-
-            b.AppendLine(DateTime.UtcNow.ToLocalTime().ToString());
-
-           SendMail("", recipients,"Resource Status Alerts",b.ToString());
+       
+        public void SendAlertNotification(IEnumerable<State> stateBatch, string recipients)
+        {
            
-       }
+            stateBatch.ToList().ForEach(x=>
+                {
+                    SendOneAlert(x, recipients);
+                }
+              );
 
-        public static void SendMail(string from, string to, string subject, string body)
+        }
+        private void SendOneAlert(State state, string recipients)
+        {
+            StringBuilder b = new StringBuilder();
+            b.AppendLine("The following resources had or have a status change: ");
+            b.AppendLine(
+                $"\r--\rResource URI: {state.Url}\rStatus Code: {state.Status}\rDescription: {state.Description}\rTime: {DateTime.UtcNow.ToLocalTime().ToString()}\r--\r");
+
+            SendMail("", recipients, "Resource Status Alerts", b.ToString());
+        }
+        private void SendMail(string from, string to, string subject, string body)
         {
         
             MailMessage message = new MailMessage();
             message.Subject = subject;
             message.Body = body;
             message.To.Add(to);
-            
             SmtpClient smtp = new SmtpClient();
             smtp.SendMailAsync(message);
         }
-    
 
+        
+
+       
     }
 }

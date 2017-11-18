@@ -3,7 +3,7 @@
   <Class Name="Status.HttpResource">
     <Position X="0.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAABAAAAAAAAAACAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAABAAAAAAAAAACAAAAAAICAAAAAAAAAAAAAA=</HashCode>
       <FileName>HttpResource.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -25,8 +25,8 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Status.ResourcePoller" Collapsed="true">
-    <Position X="9.75" Y="4.75" Width="1.5" />
+  <Class Name="Status.ResourcePoller">
+    <Position X="9.75" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAQgAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>ResourcePoller.cs</FileName>
@@ -35,7 +35,7 @@
   <Class Name="Status.Server">
     <Position X="4.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAACAAAAAAAAACAAECACAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAACAAAAAAAAACIAECACAAAAAAACAAAAQCAAAAAAAA=</HashCode>
       <FileName>Server.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -46,27 +46,17 @@
       <FileName>WindowsService.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Status.Database">
-    <Position X="6.75" Y="6.25" Width="1.5" />
+  <Class Name="Status.IisAppPool">
+    <Position X="7" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Database.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Field Name="_dbComponents" />
-    </ShowAsCollectionAssociation>
-  </Class>
-  <Class Name="Status.DatabaseComponent">
-    <Position X="8.75" Y="8.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>DatabaseComponent.cs</FileName>
+      <HashCode>AQQAAAAAAAEACAAAAAAAAAAAgAAACAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IisAppPool.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="Status.State" Collapsed="true">
     <Position X="9.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAACQAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAEEAAAgAAAAAAAAAAAAAAAAAAAACQAAAAAAAAA=</HashCode>
       <FileName>State.cs</FileName>
     </TypeIdentifier>
   </Struct>
