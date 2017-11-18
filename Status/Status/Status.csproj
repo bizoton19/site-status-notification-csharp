@@ -85,10 +85,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractResourceFactory.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="IisAppPool.cs" />
     <Compile Include="MODE.cs" />
-    <Compile Include="NullResource.cs" />
     <Compile Include="ResourceFactory.cs" />
     <Compile Include="HttpResource.cs" />
     <Compile Include="IPollable.cs" />

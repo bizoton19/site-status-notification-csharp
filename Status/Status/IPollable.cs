@@ -8,9 +8,8 @@ namespace Status
 {
    public interface IPollable
     {
-       Task<State> Poll();
-       bool Exist();
+        Task<State> Poll();
        string GetAbsoluteUri();
-       int GetErrorCount();
+       
     }
 }

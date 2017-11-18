@@ -14,21 +14,15 @@ namespace Status
         internal string Url{ get; set; }
 
 
-        public virtual Task<State> Poll()
+        public abstract Task<State> Poll();
+        public virtual bool Exist()
         {
-          throw new NotImplementedException();
+            return !String.IsNullOrEmpty(Url);
         }
+  
+       
 
-        public virtual  bool Exist()
-        {
-             return true;
-        }
-
-        public virtual int GetErrorCount()
-        {
-            throw new NotImplementedException();
-        }
-
+      
         public virtual string GetAbsoluteUri()
         {
             return this.Url;
