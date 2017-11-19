@@ -83,11 +83,9 @@ Each resource type follow a pattern in the config file.
 * In order to poll IIS resources, you will need to install the following nuget package, it should already be in the `package.json` file
 ```
 Install-Package Microsoft.Web.Administration -Version 11.0.0
-
 ```
 #### The Resource Record Type
-```
-
+```csharp
     public abstract class Resource : IPollable
     {
         public string Status { get; protected set; }
