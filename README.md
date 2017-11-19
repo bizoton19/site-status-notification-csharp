@@ -43,7 +43,7 @@ urls.ForEach(s =>
 ### Configuration
 The resources are currently being parsed in the configuration file.
 Each resource type follow a pattern in the config file.
-  For http resources, the resource factory class doesn't need the type of resource specified, it simply looks for http at the begining of the resource identifier
+  For http resources, the resource factory class doesn't need the type of resource specified, it simply looks for http at the begining of the resource identifier. 
   For other resources, a resource type is specified in the form of `{resource type}:{resource}` or `{server}@{resource}:{resourcetype}` for resources running on server. The resources, of course, can come from a database or from anywhere as long as they can be created through an object that can return an anemic `Resource` type
   ```
   <appSettings>
