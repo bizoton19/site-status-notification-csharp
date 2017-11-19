@@ -35,10 +35,82 @@ urls.ForEach(s =>
 ```
 
 ## Configuration Based Resources
-the resources are currently being parsed in the configuration file.
-each resource type follow a pattern in the config file.
+
+## Pre-requisites
+### For Execution
+* Windows 7, Server 2008 , Server 2008R2, Server 2012, Windows 10.
+* If running on background mode, SMTP server is required for email alert notifications.
+
+### Configuration
+The resources are currently being parsed in the configuration file.
+Each resource type follow a pattern in the config file.
   For http resources, the resource factory class doesn't need the type of resource specified, it simply looks for http at the begining of the resource identifier
-  For other resources, a resource type is specified in the form of {resource type}:{resource}
+  For other resources, a resource type is specified in the form of `{resource type}:{resource}` or `{server}@{resource}:{resourcetype}` for resources running on server. The resources, of course, can come from a database or from anywhere as long as they can be created through an object that can return an anemic `Resource` type
+  ```
+  <appSettings>
+    <!--Polling HTTP endpoints app pool on the castleblack server-->
+    <!--Polling/Pinging Servers by name or by IP address-->
+    <!--Polling a RabbitMQ  runing as a Windows Service on the  castleblack server-->
+    <!--Polling HTTP endpoints app pool on the castleblack server-->
+    <add key="resources" value="https://www.cloud.gov,
+         https://www.hdwih.com,
+         https://www.amazon.com,
+         stormsend:server,
+         castleblack:server,
+         castleblack@RabbitMQService:WindowsService, 
+         castleblack@DefaultAppPool@IISAppool"/> 
+    <add key="To" value="" />
+    <add key="mode" value="console"/>
+    <add key="PollingInterval" value="20000" />
+  </appSettings>
+  ```
+#### The Resource Record Type
+```
+/// <summary>
+    /// Defines the <see cref="Resource" />
+    /// </summary>
+    public abstract class Resource : IPollable
+    {
+        /// <summary>
+        /// Gets or sets the Status
+        /// </summary>
+        public string Status { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets the Name
+        /// </summary>
+        public string Name { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets the Url
+        /// </summary>
+        internal string Url { get; set; }
+
+        /// <summary>
+        /// The Poll
+        /// </summary>
+        /// <returns>The <see cref="Task{State}"/></returns>
+        public abstract Task<State> Poll();
+
+        /// <summary>
+        /// The Exist
+        /// </summary>
+        /// <returns>The <see cref="bool"/></returns>
+        public virtual bool Exist()
+        {
+            return !String.IsNullOrEmpty(Url);
+        }
+
+        /// <summary>
+        /// The GetAbsoluteUri
+        /// </summary>
+        /// <returns>The <see cref="string"/></returns>
+        public virtual string GetAbsoluteUri()
+        {
+            return this.Url;
+        }
+    }
+```
+### Security Assumptions
+If the sample StatusPollConsole executable is used as is, the polling will be done with the current logged user's Windows security context. This means that any HTTP resources that implement single sign on, WMI resources or databases being polled will require the user running the poller to have the proper security.
 ## Getting Started
