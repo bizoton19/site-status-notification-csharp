@@ -1,4 +1,4 @@
-# site-status-notification-csharp
+# site-status-notification-csharp [![Build status](https://ci.appveyor.com/api/projects/status/mffy7ljrpofao9r2/branch/master?svg=true)](https://ci.appveyor.com/project/bizoton19/site-status-notification-csharp/branch/master)
 site monitoring and notification in c# .net
 
 This project is a port from Golang's https://golang.org/doc/codewalk/sharemem/. It was expanded using .NET's async await features since we couldn't use golang. I'm not comparing the methodology here, .NET doesn't have `GO Routines` that share memory by communicating instead of communicating by sharing memory but the ease at which asynchronous operations can be performed now in .NET (with a few gotchas), helped with the task at hand.
