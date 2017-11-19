@@ -1,16 +1,17 @@
 # site-status-notification-csharp
 site monitoring and notification in c# .net
 
-This project is a port from Golang's https://golang.org/doc/codewalk/sharemem/. It was expanded using .NET's async await features since we couldn't use golang. I'm not comparing the methodology here, .NET doens't have `GO Routines` that share memory by communicating instead of communicating by sharing memory but the ease at which asynchronous operations can be performed now in .NET (with a few gotchas), helped with the task at hand.
-The goal of this project was to provide a single CL executable that can poll different resources and in a generic way, report on their status in a given interval.
+This project is a port from Golang's https://golang.org/doc/codewalk/sharemem/. It was expanded using .NET's async await features since we couldn't use golang. I'm not comparing the methodology here, .NET doesn't have `GO Routines` that share memory by communicating instead of communicating by sharing memory but the ease at which asynchronous operations can be performed now in .NET (with a few gotchas), helped with the task at hand.
+The goal of this tool was to provide a single executable that can poll different resources and in a generic way, report on their status in a given interval. We simply wanted to know when a subset of resources were down but also we wanted to look for patterns (time of day and frequency or non OK responses)
 It's a lightweight resource monitoring tool that runs on Windows only. It can help if :
-* You don't have access to a big enterprise tool such as solarwinds
+* You don't have access to a big enterprise tool such as solarwinds.
 * If you are running Windows and want to avoid the setup Nagios or the other tools out there, fantastic tools but may require more upfront time and work to setup.
 * If you want total control over how resources are polled. The Status library is extensible, the resource implementations can be substituted.
+* With this poller, i can on demand run several instances of the poller with different groups of resources or focus the polling on specific sets of resources, get notified by email, as opposed to drilling down several levels in a UI to finally find the status of a resource.
 
 
 ## Anatomy of Project
-The core library is the Status library, the basic concept of polling is defined in there and there several default implementations of the `IPoller` interface. Each implementation represent a different resource type. The default creation of resources is not very robust but a different implementation is possible by overriding the  the `AbstractResourceFactory` class.
+The core library is the Status library, the basic concept of polling is defined in there, including several default implementations of the `Resource` abstract class. Each implementation represent a different resource type `(Http, Server, IIS AppPool etc.)`. The default creation of resources is not very robust but a different implementation is possible by overriding the  the `AbstractResourceFactory` class.
 Currently, the `ResourceFactory` class implements the `AbstractResourceFactory` class:
 
 ``` 
@@ -33,8 +34,6 @@ urls.ForEach(s =>
      Console.WriteLine("Unrecognizable resource: {0} . Please verify config file", string.Concat(r.Name, "@", r.GetAbsoluteUri()));
 });
 ```
-
-## Configuration Based Resources
 
 ## Pre-requisites
 ### For Execution
@@ -66,45 +65,17 @@ Each resource type follow a pattern in the config file.
   ```
 #### The Resource Record Type
 ```
-/// <summary>
-    /// Defines the <see cref="Resource" />
-    /// </summary>
+
     public abstract class Resource : IPollable
     {
-        /// <summary>
-        /// Gets or sets the Status
-        /// </summary>
         public string Status { get; protected set; }
-
-        /// <summary>
-        /// Gets or sets the Name
-        /// </summary>
         public string Name { get; protected set; }
-
-        /// <summary>
-        /// Gets or sets the Url
-        /// </summary>
         internal string Url { get; set; }
-
-        /// <summary>
-        /// The Poll
-        /// </summary>
-        /// <returns>The <see cref="Task{State}"/></returns>
         public abstract Task<State> Poll();
-
-        /// <summary>
-        /// The Exist
-        /// </summary>
-        /// <returns>The <see cref="bool"/></returns>
         public virtual bool Exist()
         {
             return !String.IsNullOrEmpty(Url);
         }
-
-        /// <summary>
-        /// The GetAbsoluteUri
-        /// </summary>
-        /// <returns>The <see cref="string"/></returns>
         public virtual string GetAbsoluteUri()
         {
             return this.Url;
@@ -121,8 +92,8 @@ If the sample StatusPollConsole executable is used as is, the polling will be do
 * Run in debug if you wish or 
 * There is , what i think is probably, the worst [Cake](https://cakebuild.net/) build script file in existence, that will build and deploy the executable and dependencies to the C:\Poller directory.
 ## Default Deployment
-Simply execute the build.ps1 script
-To modify the deployment open the Cake script and make your changes there.
+Simply execute the `build.ps1` script
+to modify the deployment open the Cake script and make your changes there.
 
 
 
