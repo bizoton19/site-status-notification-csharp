@@ -11,10 +11,10 @@ It's a lightweight resource monitoring tool that runs on Windows only. It can he
 
 
 ## Anatomy of Project
-The core library is the Status library, the basic concept of polling is defined in there, including several default implementations of the `Resource` abstract class. Each implementation represent a different resource type `(Http, Server, IIS AppPool etc.)`. The default creation of resources is not very robust but a different implementation is possible by overriding the  the `AbstractResourceFactory` class.
-Currently, the `ResourceFactory` class implements the `AbstractResourceFactory` class:
+The core library is the Status library, the basic concept of polling is defined in there, including several default implementations of the `Resource` abstract class. Each implementation represent a different resource type `(Http, Server, IIS AppPool etc.)`. The default creation of resources is not very robust but a different implementation is possible by overriding the `AbstractResourceFactory` class.
+Currently, the `ResourceFactory` class implements the `AbstractResourceFactory` and has no specific implementation:
 
-``` 
+```csharp
 public class ResourceFactory:AbstractResourceFactory
     {
        
@@ -24,10 +24,10 @@ public class ResourceFactory:AbstractResourceFactory
 ```
 It's used in the `StatusPollConsole` sample program like so :
 
-``` 
+```csharp 
 urls.ForEach(s =>
 {
-   Resource r = new ResourceFactory().GetResource(s);
+   Resource r = new ResourceFactory().CreateResource(s);
    if (r.Exist())
     resources.Add(r);
    else
@@ -45,7 +45,7 @@ The resources are currently being parsed in the configuration file.
 Each resource type follow a pattern in the config file.
   For http resources, the resource factory class doesn't need the type of resource specified, it simply looks for http at the begining of the resource identifier. 
   For other resources, a resource type is specified in the form of `{resource type}:{resource}` or `{server}@{resource}:{resourcetype}` for resources running on server. The resources, of course, can come from a database or from anywhere as long as they can be created through an object that can return an anemic `Resource` type
-  ```
+  ```xml
   <appSettings>
     <!--Polling various HTTP endpoints -->
     <!--Polling/Pinging Servers by name or by IP address-->
@@ -58,11 +58,33 @@ Each resource type follow a pattern in the config file.
          castleblack:server,
          castleblack@RabbitMQService:WindowsService, 
          castleblack@DefaultAppPool@IISAppool"/> 
-    <add key="To" value="" />
-    <add key="mode" value="console"/>
+    <add key="To" value="" />  <!--Alert email recipients -->
+    <add key="mode" value="console"/>  <!--the run mode , console or background -->
     <add key="PollingInterval" value="20000" />
   </appSettings>
   ```
+#### Other Configuration Dependencies
+* The config file will need a mailsettings section or the `SendMail()` method in the `StateLogger` class will need to change.
+```xml
+<configuration>  
+  <system.net>  
+    <mailSettings>  
+      <smtp deliveryMethod="network">  
+        <network  
+          host="{your smtp server here}"  
+          port="25"  
+          defaultCredentials="true"  
+        />  
+      </smtp>  
+    </mailSettings>  
+  </system.net>  
+</configuration>
+```
+* In order to poll IIS resources, you will need to install the following nuget package, it should already be in the `package.json` file
+```
+Install-Package Microsoft.Web.Administration -Version 11.0.0
+
+```
 #### The Resource Record Type
 ```
 
@@ -92,8 +114,8 @@ If the sample StatusPollConsole executable is used as is, the polling will be do
 * Run in debug if you wish or 
 * There is , what i think is probably, the worst [Cake](https://cakebuild.net/) build script file in existence, that will build and deploy the executable and dependencies to the C:\Poller directory.
 ## Default Deployment
-Simply execute the `build.ps1` script
-to modify the deployment open the Cake script and make your changes there.
+Simply execute the `build.ps1` script.
+To modify the deployment open the Cake script and make your changes there.
 
 
 
