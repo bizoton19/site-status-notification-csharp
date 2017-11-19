@@ -7,7 +7,7 @@ It's a lightweight resource monitoring tool that runs on Windows only. It can he
 * You don't have access to a big enterprise tool such as solarwinds.
 * If you are running Windows and want to avoid the setup Nagios or the other tools out there, fantastic tools but may require more upfront time and work to setup.
 * If you want total control over how resources are polled. The Status library is extensible, the resource implementations can be substituted.
-* With this poller, i can on demand run several instances of the poller with different groups of resources or focus the polling on specific sets of resources, get notified by email, as opposed to drilling down several levels in a UI to finally find the status of a resource.
+* With this poller, i can on demand, run several instances of the poller with different groups of resources or focus the polling on specific sets of resources, get notified by email, as opposed to drilling down several levels in a UI to finally find the status of a resource.
 
 
 ## Anatomy of Project
