@@ -1,7 +1,7 @@
 # site-status-notification-csharp [![Build status](https://ci.appveyor.com/api/projects/status/mffy7ljrpofao9r2/branch/master?svg=true)](https://ci.appveyor.com/project/bizoton19/site-status-notification-csharp/branch/master)
 site monitoring and notification in c# .net
 
-This project is a port from Golang's https://golang.org/doc/codewalk/sharemem/. It was expanded using .NET's async await features since we couldn't use golang. I'm not comparing the methodology here, .NET doesn't have `GO Routines` that share memory by communicating instead of communicating by sharing memory but the ease at which asynchronous operations can be performed now in .NET (with a few gotchas), helped with the task at hand.
+This project is a port from `Golang`'s https://golang.org/doc/codewalk/sharemem/. It was expanded using .NET's async await features since we couldn't use `Golang`. I'm not comparing the methodology here, .NET doesn't have `GO Routines` that share memory by communicating instead of communicating by sharing memory but in this case, asynchronous polling with the .NET `Task` mechanism helped achive this goal.
 The goal of this tool was to provide a single executable that can poll different resources and in a generic way, report on their status in a given interval. We simply wanted to know when a subset of resources were down but also we wanted to look for patterns (time of day and frequency or non OK responses)
 It's a lightweight resource monitoring tool that runs on Windows only. It can help if :
 * You don't have access to a big enterprise tool such as solarwinds.
@@ -38,13 +38,13 @@ urls.ForEach(s =>
 ## Pre-requisites
 ### For Execution
 * Windows 7, Server 2008 , Server 2008R2, Server 2012, Windows 10.
-* If running on background mode, SMTP server is required for email alert notifications.
+* If running in background mode, SMTP server is required for email alert notifications. See configuration section below on how the `mode/runmode` parameter is set.
 
 ### Configuration
 The resources are currently being parsed in the configuration file.
 Each resource type follow a pattern in the config file.
   For http resources, the resource factory class doesn't need the type of resource specified, it simply looks for http at the begining of the resource identifier. 
-  For other resources, a resource type is specified in the form of `{resource type}:{resource}` or `{server}@{resource}:{resourcetype}` for resources running on server. The resources, of course, can come from a database or from anywhere as long as they can be created through an object that can return an anemic `Resource` type
+  For other resources, a resource type is specified in the form of `{resource}:{resource type}` or `{server}@{resource}:{resourcetype}` for resources running on server. The resources, of course, can come from a database or from anywhere as long as they can be created through an object that can return an anemic `Resource` type
   ```xml
   <appSettings>
     <!--Polling various HTTP endpoints -->
@@ -57,7 +57,7 @@ Each resource type follow a pattern in the config file.
          stormsend:server,
          castleblack:server,
          castleblack@RabbitMQService:WindowsService, 
-         castleblack@DefaultAppPool@IISAppool"/> 
+         castleblack@DefaultAppPool:IISAppool"/> 
     <add key="To" value="" />  <!--Alert email recipients -->
     <add key="mode" value="console"/>  <!--the run mode , console or background -->
     <add key="PollingInterval" value="20000" />
