@@ -86,6 +86,7 @@ Each resource type follow a pattern in the config file.
 Install-Package Microsoft.Web.Administration -Version 11.0.0
 ```
 #### The Resource Record Type
+
 ```csharp
     public abstract class Resource : IPollable
     {
