@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Status
 {
-   public interface IPollable
+   public interface Resource
     {
         Task<State> Poll();
-       string GetAbsoluteUri();
+        string GetAbsoluteUri();
        
     }
 }

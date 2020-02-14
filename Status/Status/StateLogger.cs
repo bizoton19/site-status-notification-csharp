@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Mail;
 
+
 namespace Status
 {
    
@@ -12,11 +13,17 @@ namespace Status
     public abstract class StateLogger
     {
         private MODE _mode;
+        private IResourceRepository _repo;
         public StateLogger(MODE mode)
         {
             _mode = mode;
         }
-        public abstract StateLogger Save(Resource resource, string taskStatus);
+        public StateLogger(MODE mode,IResourceRepository repo)
+        {
+            _mode = mode;
+            _repo = repo;
+        }
+        
         
         public virtual StateLogger Log (Resource resource, string taskStatus )
         {
@@ -31,11 +38,26 @@ namespace Status
             
             return this;
         }
-        public virtual StateLogger Log(IEnumerable<State> stateBatch, string recipients)
+        /// <summary>
+        /// Depending on the _mode variable, the function will either print the log status or send an alert notification via email
+        /// </summary>
+        /// <param name="stateBatch"></param>
+        /// <param name="recipients"></param>
+        /// <returns></returns>
+        public virtual async Task<StateLogger> Log(ICollection<State> stateBatch, string recipients)
         {
             if (_mode == MODE.Background)
             {
                 SendAlertNotification(stateBatch, recipients);
+                    if (_repo != null)
+                    {
+                        await _repo.Save(stateBatch);
+                    }
+                    else
+                    {
+                        throw new Exception("Repository Object IStateRepository is not instantiated");
+                    }
+                
             }
             else
             {
@@ -57,22 +79,28 @@ namespace Status
        
         public void SendAlertNotification(IEnumerable<State> stateBatch, string recipients)
         {
-           
-            stateBatch.ToList().ForEach(x=>
-                {
-                    SendOneAlert(x, recipients);
-                }
-              );
-
+            StringBuilder msg = new StringBuilder();
+            msg.AppendLine("The following resources had or have a status change: ");
+            msg.Append(buildMessagingTemplate(stateBatch, msg));
+            SendOneAlert(msg.ToString(), recipients);
+     
         }
-        private void SendOneAlert(State state, string recipients)
-        {
-            StringBuilder b = new StringBuilder();
-            b.AppendLine("The following resources had or have a status change: ");
-            b.AppendLine(
-                $"\r--\rResource URI: {state.Url}\rStatus Code: {state.Status}\rDescription: {state.Description}\rTime: {DateTime.UtcNow.ToLocalTime().ToString()}\r--\r");
 
-            SendMail("", recipients, "Resource Status Alerts", b.ToString());
+        public string buildMessagingTemplate(IEnumerable<State> stateBatch,StringBuilder msg)
+        {
+            
+            stateBatch.ToList().ForEach(x =>
+            {
+                msg.AppendLine(
+                    $"\r--\r\rResource Type: {x.Type}\r[[Resource URI: {x.Url}]---\rStatus Code: {x.Status}\rDescription: {x.Description}\rTime (UTC Local Time): {DateTime.UtcNow.ToLocalTime().ToString()}\r--\r");
+            });
+
+            return msg.ToString();
+        }
+        private void SendOneAlert(string currPollState, string recipients)
+        {
+            
+            SendMail("", recipients, "Resource Status Alerts",currPollState);
         }
         private void SendMail(string from, string to, string subject, string body)
         {

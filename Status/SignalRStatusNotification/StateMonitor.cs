@@ -19,10 +19,6 @@
         /// </summary>
         private StateLogger _logger;
 
-        /// <summary>
-        /// Defines the _hubs
-        /// </summary>
-        private IHubContext _hubs;
 
         /// <summary>
         /// Defines the _interval
@@ -61,7 +57,6 @@
         /// <param name="resourceUris">The <see cref="List{Resource}"/></param>
         public StateMonitor(int updateInterval, List<Resource> resourceUris, MODE mode)
         {
-            _hubs = GlobalHost.ConnectionManager.GetHubContext<StatusNotificationHub>();
             this._interval = updateInterval;
             urls = resourceUris;
             _mode = mode;
@@ -88,8 +83,6 @@
         /// </summary>
         private void BeginPolling()
         {
-            while (ResourcePoller.IsNetworkAvailable())
-            {
                 System.Threading.Thread.Sleep(this._interval);
                 foreach (var resource in urls)
                 {
@@ -107,14 +100,20 @@
 
                 if (_states.Any())
                 {
+
+                    //map _states list to another list for just states that are in error then call the alert logger
+                   _logger.Log( _states
+                          .Where(s => s.Status != "OK")
+                          .ToList<State>(), _notificationRecipients);
+                                    
                     _states.ToList().ForEach(x =>
                     {
                         _logger.Log(x, x.Status);
                     });
 
-                    _states.Clear();
+                    //_states.Clear();
                 }
-            }
+            
         }
 
         /// <summary>
@@ -139,7 +138,7 @@
                     t.Exception.Flatten().InnerExceptions.ToList().ForEach(exception =>
                     {
                         errMsgs.AppendLine(exception.Message + " - " + exception.InnerException);
-                        _states.Add(new State() { Url = resource.GetAbsoluteUri(), Status = errMsgs.Length > 0 ? errMsgs.ToString() : "No Exceptions Captured" });
+                        _states.Add(new State() { Type=resource.GetType().Name,Url = resource.GetAbsoluteUri(), Status = errMsgs.Length > 0 ? errMsgs.ToString() : "No Exceptions Captured" });
                     });
 
                     break;
@@ -149,7 +148,7 @@
                     t.Exception.Flatten().InnerExceptions.ToList().ForEach(exception =>
                     {
                         errMsgs.AppendLine(exception.Message + " - " + exception.InnerException);
-                        _states.Add(new State() { Url = resource.GetAbsoluteUri(), Status = errMsgs.ToString() });
+                        _states.Add(new State() { Type = resource.GetType().Name, Url = resource.GetAbsoluteUri(), Status = errMsgs.ToString() });
                     });
 
                     break;

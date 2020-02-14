@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Status</RootNamespace>
     <AssemblyName>Status</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNet.SignalR.Core">
@@ -85,35 +88,37 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractResourceFactory.cs" />
-    <Compile Include="Environment.cs" />
-    <Compile Include="IisAppPool.cs" />
-    <Compile Include="MODE.cs" />
-    <Compile Include="ResourceFactory.cs" />
-    <Compile Include="HttpResource.cs" />
+    <Compile Include="Models\Resource\AbstractResourceFactory.cs" />
+    <Compile Include="Models\Application\Application.cs" />
+    <Compile Include="Models\Application\ApplicationContact.cs" />
+    <Compile Include="Models\Application\ApplicationId.cs" />
+    <Compile Include="Models\Environment.cs" />
+    <Compile Include="Models\Resource\NetworkDrive.cs" />
+    <Compile Include="Models\Resource\ResourceId.cs" />
+    <Compile Include="Models\Application\IApplicationRepository.cs" />
+    <Compile Include="Models\Resource\IisAppPool.cs" />
+    <Compile Include="Models\Resource\IResourceRepository.cs" />
+    <Compile Include="Models\Resource\IStateRepository.cs" />
+    <Compile Include="Models\MODE.cs" />
+    <Compile Include="Models\Resource\ResourceFactory.cs" />
+    <Compile Include="Models\Resource\HttpResource.cs" />
     <Compile Include="IPollable.cs" />
-    <Compile Include="Resource.cs" />
-    <Compile Include="ResourcePoller.cs" />
-    <Compile Include="Server.cs" />
-    <Compile Include="State.cs" />
+    <Compile Include="Models\Resource\Resource.cs" />
+    <Compile Include="Models\Resource\ResourcePoller.cs" />
+    <Compile Include="Models\Resource\Server.cs" />
+    <Compile Include="Models\Resource\State.cs" />
+    <Compile Include="Models\Application\ApplicationService.cs" />
     <Compile Include="StateLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnrecognizedResourceException.cs" />
-    <Compile Include="WindowsService.cs" />
+    <Compile Include="Models\Resource\WindowsService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.6.4.js" />
-    <Content Include="Scripts\jquery-1.6.4.min.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
