@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Status
 {
-   public  abstract class Resource : Resource
+   public  abstract class Resource : IPollable
     {
         
         

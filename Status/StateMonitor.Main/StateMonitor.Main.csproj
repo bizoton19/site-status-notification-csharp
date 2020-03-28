@@ -99,13 +99,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SateMonitor.Services\StateMonitor.Engine.csproj">
+      <Project>{c508bb3a-f506-48bb-a3d3-bd65f77ffed7}</Project>
+      <Name>StateMonitor.Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StateMonitor.Datastore\StateMonitor.Datastore.csproj">
       <Project>{ee57f64f-d9cd-407e-9fe7-43cbbc703f58}</Project>
       <Name>StateMonitor.Datastore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\StateMonitor.Engine\StateMonitor.Engine.csproj">
-      <Project>{31da98be-4fe5-4fff-9f78-4043418bdc0f}</Project>
-      <Name>StateMonitor.Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\Status\Status.csproj">
       <Project>{F40BC6CF-8036-44CA-8542-EF3EF5ABBACF}</Project>

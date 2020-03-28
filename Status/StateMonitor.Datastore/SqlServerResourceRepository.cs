@@ -51,7 +51,7 @@ namespace StateMonitor.Datastore
                 resType = reader["Resource_Type_Name"].ToString();
                 resUri = reader["URL"].ToString();
                 resName = reader["Name"].ToString();
-                obj = new ResourceFactory().GetResource(resUri, resType, resName);
+                obj = new ResourceFactory().CreateResource(resUri, resType, resName);
                 obj.Type = resType;
                 obj.ResourceId = new ResourceId(resId);//TODO: move out to construcor
                 obj.Description = reader["Description"].ToString();

@@ -8,7 +8,7 @@ namespace Status
 {
    public class ResourceFactory:AbstractResourceFactory
     {
-        public virtual Resource GetResource(string Uri,string Type,string Name="")
+        public virtual Resource CreateResource(string Uri,string Type,string Name="")
         {
             if (Type == null)
             {

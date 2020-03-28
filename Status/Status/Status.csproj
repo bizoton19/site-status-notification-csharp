@@ -102,7 +102,7 @@
     <Compile Include="Models\MODE.cs" />
     <Compile Include="Models\Resource\ResourceFactory.cs" />
     <Compile Include="Models\Resource\HttpResource.cs" />
-    <Compile Include="IPollable.cs" />
+    <Compile Include="Models\IPollable.cs" />
     <Compile Include="Models\Resource\Resource.cs" />
     <Compile Include="Models\Resource\ResourcePoller.cs" />
     <Compile Include="Models\Resource\Server.cs" />

@@ -68,9 +68,9 @@ namespace Status
                server = ServerManager.OpenRemote(serverInstance.Name) ;
                     if (server != null&& this.Exist())
                     {
-                    state = new State();
-                    state.Url = string.Concat(this.Name, "@", serverInstance.Name);
-                    stateResult = server.ApplicationPools[Name].State;
+                        state = new State();
+                        state.Url = string.Concat(this.Name, "@", serverInstance.Name);
+                        stateResult = server.ApplicationPools[Name].State;
 
                     if (stateResult == ObjectState.Started) {
 

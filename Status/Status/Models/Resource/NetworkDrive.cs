@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.OI;
 using System.Net;
 using System.IO;
 
-namespace Status.Models.Resource
+namespace Status
 {
     public class NetworkDrive :Resource
     {
@@ -30,10 +29,16 @@ namespace Status.Models.Resource
 
         public override async Task<State> Poll()
         {
-            //var state = new State();
-            // state.Status = await TestPath() == false ? "NotAccesible" : "OK");
+            State state = new State();
+            state.Url = _networkName;
+            state.Type = "NetworkDrive";
+            state.Status = "Unknown";
+            await Task.Run(() =>
+            {
+                return state.Status = TestPath() == false ? "NotAccesible" : "OK";
+            });
 
-           
+            return state;
         }
         private bool TestPath()
         {
